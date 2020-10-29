@@ -1,0 +1,711 @@
+系统模块
+node：
+nodejs规定一个js文件就是一个模块，模块内部变量和函数不能外部使用，所以可以使用exports和require
+exports  导出   module.exports
+require  导入
+系统模块fs路径操作
+系统模块path文件操作
+路径拼接path.join
+相对路径   
+绝对路径：使用__dirname获取当前文件所在的绝对路径
+第三方模块
+（1）gulp：压缩   es6转换es5css
+（2）nodemon：保存一次更新执行一次
+node_modules:存放第三方模块及其方法
+package.json:记录当前项目（当前文件夹/路径）信息，依赖哪些第三方模块
+package-lock.json：记录了当前项目包的下载地址，加快下载速度   ，锁定包版本
+模块加载机制
+模块查找规则-拥有路径没有后缀名：
+js文件>没有的话就同名js文件夹>下的index.js>没有的话就package.json的main的入口文件>找不到报错
+没有路径没有后缀名：
+node_modules文件夹的js文件>没有的话就在这找同名js文件夹>下的index.js>没有的话就package.json的main的入口文件>找不到报错
+项目依赖:   --production
+"dependencies": {
+        "formidable": "^1.2.2",
+        "mime": "^2.4.6"
+    },
+开发依赖：
+"devDependencies": {
+        "gulp": "^4.0.2"
+    }
+
+别名（快捷语）：   npm run build
+"scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "nodemon app.js"
+    }
+服务器端基础概念：
+
+1.网站：客户端js css html，服务器端 存储数据处理
+2.客户端   >请求    服务器端
+  客户端   响应<    服务器端(node.js)
+3.网站服务器   远端操控
+4.IP地址    互联网协议地址   一串数字   125.13.14.5
+↓  难记
+5.域名  http：//www.baidu.com
+6.端口：区分服务器电脑中提供的不同的服务   像食堂不同的窗口买不同的饭   也是一串数字
+URL
+统一资源定位符   编址方式
+组成： 传输协议：//服务器IP或域名：端口/资源所在位置标识
+1.传输协议：http  
+2.端口一般在没有加的情况下，一般默认是80端口
+
+一台电脑：客户端（浏览器） 服务器端（Node）
+本机域名：localhost
+本地IP：127.0.0.1
+
+创建web服务器：向服务器端发送请求，向客户端请求响应
+创建服务器，得到请求对象和响应对象，请求来的时候执行响应函数，返回响应，监听端口
+先引入http模块
+
+创建网站服务器的代码：http.createServer();
+
+HTTP协议：超文本传输协议  HTML文本  规定如何沟通  
+报文：请求和响应过程中所携带的数据块（说明，内容）
+
+请求报文：
+1.请求方式
+GET获取数据  POST添加数据  登录也用POST   POST相对GET安全一些   在浏览器中GET和POST
+2.请求地址     
+    app.on('request', (req, res) => {
+        // 获取请求方式
+    // req.method
+    // console.log(req.method);
+
+    // 获取请求地址    要引入系统模块url
+    // req.url
+    // console.log(req.url);
+
+    // 获取请求报文信息
+    // req.headers
+    });
+
+    // 获取request里面的信息   转换格式
+    res.writeHead(200, {
+        // 'content-type': 'text/plain' //默认纯文本
+        'content-type': 'text/html;charset=utf8'
+    });
+
+响应报文：  告诉客户端这次请求是成功还是失败的方式
+1.HTTP状态码
+200请求成功
+404请求的资源没有找到
+500服务器端错误（代码报错）
+400客户端请求语法有问题（错误）
+
+2.内容类型
+返回一个html文件
+设置text/html    
+text/plain   默认纯文本
+
+1.请求参数：   客户端向服务器端发送请求时，有时需要携带一些客户信息，客户信息需要通过请求参数的形式传递到服务器
+2.GET请求参数：？后面的就是请求参数
+键值对  以等号进行分割   多个用&符隔开
+
+nodejs里面有一个内置模块（url），可以用来处理请求参数
+
+url.parse()方法可以把地址处理成一个对象的形式
+里面有两个参数：
+// 1)要解析的url地址
+// 2)将要查询的参数解析成对象形式
+url.parse(req.url, true)
+
+3.POST请求参数：
+写在form表单的input标签的name属性里的
+querystring内置模块
+参数被放在请求报文中进行传输
+ //post参数是通过事件的方式接受的
+    //data事件  当请求参数传递的时候触发data事件
+    //end事件   当参数传递完成的时候触发end事件
+通过querystring.parse()转换为对象格式
+但是：表单里的id是通过地址栏的方式提交的
+可以get post混合进行
+
+
+4.路由：实现客户端请求地址和服务器端程序代码的对应关系的   请求什么响应什么
+什么样的请求地址对应什么样的处理逻辑都是由开发人员决定的
+// 1.引入系统模块http
+// 2.创建网站服务器
+// 3.为网站服务器对象添加请求事件
+// 4.实现路由功能
+//   1)获取客户端的请求地址
+//   2)获取客户端的请求地址
+
+5.静态资源
+服务器不需要处理，直接响应   CSS，JavaScript，image文件
+静态资源访问功能：别人也能访问到
+
+6.动态资源
+相同的请求地址不同的响应资源  
+
+请求地址仅仅是一个字符标识，不是一个路径
+
+根据路径返回这个资源的类型：要引入mime模块
+mime.getType(realPath)
+
+Node.js异步编程
+1.同步API：代码从上到下执行   只有上一行代码（API）执行完成后，才能继续执行下一行代码（API）
+2.异步API：当前API的执行不会阻塞后续代码的执行    
+比如定时器就是异步API。程序不需要等待异步API执行代码
+
+区别：同步API可以从返回值中拿到API返回的结果，但是异步API不可以
+异步API的返回值是通过回调函数的方法拿到的
+
+3.回调函数：自己定义函数让别人去调用
+将函数作为参数使用
+
+在node里    先执行所有的同步函数   再执行所有的异步函数（就算是0秒的定时器也是先执行同步函数）
+顺序：
+1.先执行所有的同步函数
+2.把所有异步代码放入回调函数队列
+3.同步函数全部执行后，去找回调函数队列的异步函数
+4.按顺序执行异步函数
+
+server.on('request',(req,res)=>{})    事件处理函数在执行过程中是系统自动调用的    
+所以，事件处理函数就是回调函数，事件监听API就是异步的API
+
+异步函数存在回调地狱的问题
+
+Promise是为了解决Nodejs异步编程回调地狱的问题
+let promise=new Promise((resolve,reject)=>{
+    fs.readFile('./1.txt','utf8',(err,result)=>{
+
+    })
+});   //成功调用resolve   失败调用reject
+
+es7中新增了异步函数：
+8.async function （）{}
+// 1.在普通函数定义的前面加上async关键字   普通函数就变成了异步函数
+// 2.异步函数默认的返回值是promise对象
+3. 在异步函数内部使用return关键字进行结果返回 结果会被包裹的promise对象中 return关键字代替了resolve方法
+4. 在异步函数内部使用throw关键字抛出程序异常
+5. 调用异步函数再链式调用then方法获取异步函数执行结果
+6. 调用异步函数再链式调用catch方法获取异步函数执行的错误信息
+
+throw：抛出异常
+
+9.await关键字
+// 1.它只能出现在异步函数中
+// 2.await promise对象  它可以暂停异步函数的执行  等待promise对象返回结果后再向下执行函数
+3. await关键字可是暂停异步函数向下执行 直到promise返回结果
+
+promisify：改造现有的异步函数API  ，让其返回promise对象  从而支持异步函数语法
+
+
+
+数据库： 
+MongoDB  MYSQL
+mongoDB的API采用JavaScript的语法
+基本概念：
+DB  database 数据库
+collection   集合  数组
+document      文档    对象
+field   字段     文档中的属性名称   对象属性
+
+创建数据库：会自动创建
+连接数据库：mongoose.connect('mongodb://localhost/playground', { useNewUrlParser: true })
+但是没有插入数据就不会创建集合
+// 创建集合规则new mongoose.Schema
+// 使用规则创建集合mongoose.model
+// 参数1：集合名称Course
+// 参数2：集合规则courseSchema
+
+Mongodb增删查改
+
+
+创建文档：插入数据
+// 将文档插入到数据库中
+course.save();
+
+另一种插入文档的方式：是回调函数，说明是一个异步API
+Course.create({ name: 'Javascript', author: '黑马讲师', isPublished: false }, (err, result) => {
+    console.log(err);
+    console.log(result);
+})
+ 通过promise对象也可以插入文档：
+ // Course.create({ name: 'Javascript123', author: '黑马讲师', isPublished: false })
+//     .then((result) => {
+//         console.log(result);
+//     })
+
+注意：和数据库相关的所有操作都是异步操作
+
+增：
+mongodb数据库导入数据：
+mongoimport –d 数据库名称 –c 集合名称 –file 要导入的数据文件
+找到mongodb数据库的安装目录，将安装目录下的bin目录放置在环境变量中。
+
+查：
+// 查询用户集合中的所有文档   返回的是一个数组
+// User.find().then(result => console.log(result));
+
+// findOne方法返回一条文档  默认返回当前集合中的第一条文档
+// User.find({ _id: '5c09f236aeb04b22f8460967' }).then(result => console.log(result));
+
+// 查询用户集合中年龄字段大于20，小于40的
+// User.find({ age: { $gt: 20, $lt: 40 } }).then(result => console.log(result));
+
+// User.find({ hobbies: { $in: ['足球'] } }).then(result => console.log(result));
+
+// 选择性查询   不想查询那个就在前面加-
+// User.find().select('name email -_id').then(result => console.log(result));
+
+// 根据年龄字段进行升序排列
+// User.find().sort('age').then(result => console.log(result));
+
+// 根据年龄字段进行降序排列
+// User.find().sort('-age').then(result => console.log(result));
+
+// Skip跳过前多少条数据  limit限制查询的数量
+User.find().skip(2).limit(3).then(result => console.log(result));
+
+删：
+// 查找到一条文档并且删除
+// 返回删除的文档
+// 如果查询条件匹配了多个文档  那么将会删除第一个匹配的文档
+// 删除单个
+User.findOneAndDelete({ _id: '5c09f267aeb04b22f8460968' }).then(result => console.log(result));
+// 删除多个：
+// 如果传了一个空对象，会把User里的全部数据都删除掉，所以要特别注意小心
+User.deleteMany({}).then(result => console.log(result));
+// ok：1   1是成功删除的意思   n：4删除了4个
+
+改：
+更新文档
+更新单个：
+// 更新集合中的文档
+User.updateOne({ name: '李四' }, { name: '李狗蛋' }).then(result => console.log(result));
+
+// {}空对象是所有文档    Modified: 5   修改了5条
+// 更新多个：
+User.updateMany({}, { age: 56 }).then(result => console.log(result));
+
+mongoose验证：
+require：true  必传字段
+// 验证规则
+required: [true, '请传入文章标题'],
+minlength: [2,'文章长度不能小于2'],
+maxlength: [5,'文章长度不能超过5']
+
+type: Number,
+// 数字类型的最小范围
+min: [18, '当前年龄小于18岁'],
+// 数字的最大范围
+max: 100
+
+type: Date,
+// 默认值   现在的时间
+default: Date.now
+
+category: {
+        type: String,
+        //枚举 列举出当前字段可以拥有的值 是一个数组，验证传递类型是不是规定的
+        enum: {
+            values: ['html', 'css', 'javascript', 'node.js'],
+            // 自定义错误信息
+            message: '分类名称要在一定的范围内才可以'
+        }
+
+// 自定义
+    author: {
+        type: String,
+        validate: {
+            validator: v => {
+                // 返回布尔值  true验证成功   false验证失败
+                // v 要验证的值
+                return v && v.length > 4
+            },
+            // 自定义错误信息
+            message: '传入的值不符合验证规则'
+        }
+    }
+
+显示，获取错误信息
+Post.create({ title: ' aa ', age: 60, category: 'java', author: 'bi' })
+    .then(result => console.log(result))
+    .catch(error => {
+        // 获取错误信息对象
+        const err = error.errors;
+        // 循环错误信息对象
+        for (var attr in err) {
+            // 将错误信息打印到控制台中
+            console.log(err[attr]['message']);
+        }
+    })
+
+集合关联：
+不同集合的数据之间是有关系的
+使用populate方法进行关联 集合查询
+
+// 文章集合规则
+const postSchema = new mongoose.Schema({
+    title: {
+        type: String
+    },
+    author: {
+        // 关联的_id的类型（规定的）
+        type: mongoose.Schema.Types.ObjectId,
+        // 要关联的用户集合
+        ref: 'User'
+    }
+});
+// 用户集合
+const User = mongoose.model('User', userSchema);
+// 文章集合
+const Post = mongoose.model('Post', postSchema);
+
+// 创建用户
+// User.create({ name: 'itheima' }).then(result => console.log(result));
+
+// 创建文章
+// Post.create({ title: '123', author: '5f2b7a232ed3383038316055' }).then(result => console.log(result));
+
+Post.find().populate('author').then(result => console.log(result));
+
+分文件夹：
+model：放跟数据库相关的代码
+数据库的连接
+// 在nodejs内部有一个缓存机制，所以不同文件夹都引入mongoose模块的话，也不会造成空间的浪费的，是去缓存里面拿的
+
+模板引擎：
+模板引擎也是nodejs的第三方模块
+用来拼接字符串，是代码更易于维护
+种类有很多，功能和使用方法差不多
+art-template模板引擎：腾讯出品
+中文文档，目前运行最快的引擎
+
+views文件夹通常放模板文件
+
+// template方法是用来拼接字符串的
+// 1.第一个参数  模板路径   绝对路径
+// 2.要在模板中显示的数据   对象类型
+// 返回拼接好的字符串
+
+模板语法：
+1.标椎语法   {{数据}}
+更易阅读
+2.原始语法    <%=数据 %>
+更加强大的处理能力
+
+a)输出   可使用三元表达式
+标椎语法   {{数据}}
+原始语法    <%=数据 %>
+b)原文输出
+标椎语法   {{@数据}}
+原始语法    <%-数据 %>
+c)条件判断
+标准语法    {{if条件}}...{{/if}}
+           {{if v1}}...{{else if v2}}...{{/if}}
+原始语法    <% if(value) { %>...<% } %>
+           <% if(v1){ %>...<% } else if(v2) { %>...<% } %>
+d)循环
+标准语法   {{each 数据}}{{/each}}
+{{$value}} 就是数组里面的每一个对象
+{{$index}} 就是循环的索引
+
+原始语法   <% for() { %><% } %>
+
+子模板：使用子模板可以将公共区域（头部  底部）抽离到单独的文件中
+标准语法
+{{include '模板的路径'}}
+
+原始语法
+<% include('模板的路径') %>
+
+模板继承
+公共骨架：
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+  {{block 'link'}} {{/block}}
+  {{block '要存放的位置'}} {{/block}}
+
+</head>
+<body>
+  {{block 'content'}} {{/block}}
+</body>
+</html>
+可以将网站HTML骨架抽离到单独文件中，其他页面模板可以继承骨架文件
+独有的数据存放的art文件：
+{{extend './common/layout.art'}}
+{{extend '要引入的骨架公共文件路径'}}
+
+{{block 'content'}}
+<P>{{ msg }}</p>
+{{/block}}
+{{block '要存放的位置'}}
+<P>{{ js的模板数据 }}</p>
+{{/block}}
+
+模板配置
+1.向模板中导入变量 template.defaults.imports.变量名=变量值；
+// 导入模板变量
+template.defaults.imports.dateFormat = dateFormat; 
+// 设置模板的根目录
+template.defaults.root = path.join(__dirname, 'views');
+
+// 导入模板变量   处理日期格式的方法   固定写法
+template.defaults.imports.dateFormat = dateFormat;
+dateformat($value.enterDate,'yyyy-mm-dd')
+// 配置模板的默认后缀
+template.defaults.extname = '.art';
+
+ template('list.art', {})
+
+
+express框架
+
+// 引入express框架   返回值是一个方法
+const express = require('express');
+// 创建网站服务器
+const app = express();
+
+// send()代替end   
+    //1. send方法自动检测响应内容的类型
+    //2.send方法 会自动设置http状态码   
+    //3. send方法会帮我们自动设置响应的内容类型及编码
+    // 把这个类型自动设置到响应头当中  ，防止出现乱码
+app.get('/list', (req, res) => {
+    res.send({ name: '张三', age: 20 })
+});
+
+
+中间件
+中间件就是express框架的一堆代码
+用来接收请求，和处理请求
+可以对同一个请求设置多个中间件，对同一个请求进行多次处理
+默认情况下，请求从上到下依次匹配中间件，一旦匹配成功，终止匹配。
+可以调用next方法，将请求的控制权交给下一个中间件，直到遇到结束请求的中间件
+
+next参数
+// next是一个权限控制函数   请求将向下匹配中间件
+app.get('/request', (req, res, next) => {
+    req.name = "张三";
+    next();
+})
+
+app.get('/request', (req, res) => {
+    res.send(req.name);
+})
+
+app.use中间件用法
+匹配所有的请求方式，可以直接传入请求处理函数，代表接收所有的请求
+必须定义在其他中间件的前面
+
+
+app.use第一个参数也可以传入请求地址，代表不论什么请求方式，只要是这个请求地址就接收这个请求
+
+中间件应用
+1.路由保护，客户端在访问需要登录的页面时，可以先使用中间件判断用户登录状态，用户如果未登录，则拦截请求，直接响应，禁止用户进入需要登录的页面
+2.网站维护公告  在所有路由的最上面定义接收所有请求的中间件  直接为客户端做出响应，网站正在维护中
+3.自定义404页面
+
+4.错误使用中间件
+应用逻辑错误  bug   开发阶段解决
+预料之外的错误  文件读取错误   数据库读取失败  需要捕获  再处理
+错误处理中间件是一个集中处理错误的地方
+
+app.get('/index', (req, res, next) => {
+    // 抛出错误
+    // throw new Error('程序发生了未知错误');
+    fs.readFile('./01.js', 'utf8', (err, result) => {
+            if (err != null) {
+                // 没有传递参数，代表把控制权交给下一个中间件   传递了参数，代表触发错误中间件
+                next(err)
+            } else {
+                res.send(result)
+            }
+        })
+        // res.send('程序正常执行')
+})
+
+// 错误处理中间件  4个参数  只能主动捕获同步代码执行出错，如果异步代码出错是捕获不到的
+app.use((err, req, res, next) => {
+    res.status(500).send(err.message);
+})
+
+捕获错误
+异步API通过catch方法捕获错误
+异步函数写成同步形式要怎么捕获错误？
+用try catch    只能捕获异步函数及其他同步代码在执行过程中发生的错误   
+回调函数和promise对象的错误不能捕获
+
+try里面的代码没有发生错误，就会跳转到catch后面执行，如果发生了错误，会跳转到catch里面执行
+
+app.get('/index', async(req, res, next) => {
+    try {
+
+    }catch(){
+        
+    }
+    await readFile('./aaa.js');
+})
+
+express请求处理
+1.构建模块化路由
+// 引入express框架
+const express = require('express');
+// 创建网站服务器
+const app = express();
+//创建路由对象 
+const home = express.Router();
+// 为路由对象匹配请求路径
+app.use('/home', home);
+// 创建二级路由
+home.get('/index', (req, res) => {
+    res.send('欢迎来到博客首页页面')
+})
+
+// 端口监听
+app.listen(3000);
+
+2.二级路由
+
+3.GET参数的获取
+app.get('/index', (req, res) => {
+    // 获取get请求参数
+    res.send(req.query);
+
+})
+
+4.POST参数的获取
+Express中接收post请求参数需要借助第三方包 body-parser 
+
+//处理post请求参数 如果extend：参数是false就代表使用querystring的方式 ，如果参数是true就代表使用QS
+的第三方模块处理请求参数的格式
+app.use(bodyParser.urlencoded({extend:false}))
+
+5.Express路由参数
+另一种获取参数的方法
+app.get('/index/:id/:name/:age/:sex', (req, res) => {
+    // req.body的值是post请求参数
+    // 接收post请求参数
+    res.send(req.params);
+})
+输入：http://localhost:3000/index/123/zhangsan/20/nan
+结果：Cannot GET /index/123/zhangsan/20/nan
+
+6.静态资源的处理
+const express = require('express');
+const app = express();
+const path = require('path');
+// 实现静态资源访问功能
+// 2.可以自己指定一个虚拟路径，在拼接上文件路径就可以了  比如/static/css/base.css
+app.use('/static', express.static(path.join(__dirname, 'public')))
+// 1.直接在地址栏写public文件夹下面的静态资源文件路径就可以了
+
+express-art-template模板引擎
+在原art-template模板引擎的基础上封装了express-art-template
+同时下载art-template  和express-art-template模板引擎
+
+静态资源文件中引入的css等文件写的是相对路径，是不稳定的，路径是相对地址栏的/后面的路径的，所有要在引入css的地方上写相对路径
+
+http的无状态性：客户端发送请求，服务器端响应，响应一次完成后，服务器端和客户端就断开了，下次再访问服务器端，服务端不认得客户端
+必须要建立服务器端和客户端的关联关系：用到cookie和session
+
+cookie：浏览器在你的电脑硬盘上开辟的一块存储数据的空间   主要供服务器存储数据
+
+谁能向cookie中存储数据：客户端的JavaScript可以，服务器端也可以
+每一个网站都可以向cookie中存储数据，所以cookie中的数据是以域名的形式进行区分的
+cookie有过期时间，超过会被删除
+cookie数据随着请求被自动发给服务器端
+
+如果在存储cookie的时候，不设置cookie时间，浏览器在关闭的时候就会被删除
+cookie中的数据最重要的特点：随着请求自动发送给服务器端
+第一次访问客户端是没有这些cookie数据的，当浏览器向服务器发送请求才给我们存储着这些cookie数据，当客户端再一次向服务器端发送请求的时候，这些数据会随着客户端携带给服务器端
+
+session
+
+session实际上就是一个对象，存储在服务器的内存中，在session对象中也可以存储多条数据，每一条数据都有一以session作为唯一标识
+
+客户端把邮件地址、密码的参数发送给服务器端，服务器端进行验证请求参数，验证成功生成sessionId，随着服务器端响应客户端，将sessionId存储在客户端的cookie中
+
+客户端下一次访问服务器端，cookie被自动发送给服务器端，服务器拿到cookie中存储的sessionId，然后在服务器端的session对象中查找sessionId，找到说明用户登陆过，没找到说明没有登录过，响应用户登录之后才能获取的页面（数据），没有登录响应错误提示就可以了
+
+实现session功能：express-session模块
+
+返回一个方法，调用这个方法就可以在服务器端创建session对象了
+
+用app.use拦截请求，将请求交给session对象处理，session为请求对象下面添加一个属性叫session，值是一个对象，这个对象在用户登录成功后保存用户信息，这个方法在我们在session对象中存储数据时，生成一个当前存储的数据的唯一标识sessionId，然后将这个sessionId存储在客户端的cookie当中
+
+客户端下一次访问服务器端，cookie被自动发送给服务器端，服务器拿到cookie中存储的sessionId，然后在服务器端的session对象中查找sessionId，找到说明用户登陆过，没找到说明没有登录过，响应用户登录之后才能获取的页面（数据），没有登录响应错误提示就可以了
+
+但我们修改代码时，命令行会帮我们重新启动网站服务器，当网站服务重启的时候， 服务器的session对象就会失效
+
+
+ res.redirect('')   重定向的意思   
+ redirect除了重定向还做了一件事就是res.end 如果后面再res.send会报错  所以可以在前面加return
+
+app是req对象下的一个属性
+app.locals.userInfo=user;
+
+通过a标签过来的请求一定是get请求
+
+只要调用destroy方法就可以删除当前用户的session，方法内部会自动根据cookie当中存储的sessionID来删除当前用户所对应的的用户信息,只要执行这个毁掉函数就说明这个session删除成功
+req.session.destroy(function () {
+        
+    });
+//删除cookie
+res.clearCookie('cookie的名字');
+res.clearCookie('connect.sid');
+
+saveUninitialized: false  当用户没有登录的情况下，不保存一个cookie，虽然一开始默认是登录的
+
+//渲染页面   渲染模板
+res.render('要渲染的模板的路径')
+
+
+action="请求地址"
+<form class="form-container" action='/admin/user-edit' method="post">
+
+传递的是option里面的value值 不是字
+<select class="form-control" name="role">
+        <option value="normal">普通用户</option>
+        <option value="admin">超级管理员</option>
+</select>
+
+Joi
+第三方模块
+验证JavaScript对象格式，验证字段，验证JavaScript对象的规则描述语言和验证器
+必须是符合验证规则的属性，如果出现了验证规则以外的属性验证就会失败
+const schema={
+    //必须是字符串类型，只能是字母或者数字字符串，不能出现比如下划线$符的类型，必选属性
+    username:Joi.string().alphanum().min(3).max(30).require().error(new Error('自定义错误信息')),
+    //regex验证正则表达式的规则
+    password:Joi.string().regex(/^[a-zA-z0-9]{3,30}$/)
+
+}；
+
+//验证用validate方法，返回promise对象（验证的那个对象），验证失败则抛出异常
+Joi.validate({username:'acv',birthyear:1994},schema)
+如果不加必选的属性，验证的属性中可以没有这些属性
+
+这种报错：少了逗号
+SyntaxError: Unexpected identifier
+
+
+
+bcrypt模块：
+
+// 导入bcrypt
+const bcrypt = require('bcrypt');
+
+async function run() {
+    //生成随机字符串
+    // genSalt方法接收一个数值作为参数
+    //数值越大  生成的随机字符串复杂度越高
+    //数值越小  生成的随机字符串复杂度越低
+    //默认值是10，代表10复杂度
+    //返回生成的随机字符串
+    const salt = await bcrypt.genSalt(10);
+    //对密码进行加密
+    //1.要进行加密的明文
+    //2.随机字符串
+    //返回值是加密后的密码
+    const result = await bcrypt.hash('123456', salt);
+    console.log(salt);
+    console.log(result);
+}
+run();
